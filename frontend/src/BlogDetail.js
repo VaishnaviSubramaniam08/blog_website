@@ -217,9 +217,14 @@ function BlogDetail() {
 
   if (loading) {
     return (
-      <div style={styles.container}>
-        <p style={{ textAlign: "center" }}>Loading blog...</p>
-      </div>
+      <>
+        <style>{blogDetailStyles}</style>
+        <div className="blog-detail-container">
+          <div className="blog-detail-content">
+            <p style={{ textAlign: "center" }}>Loading blog...</p>
+          </div>
+        </div>
+      </>
     );
   }
 
