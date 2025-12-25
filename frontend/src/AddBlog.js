@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import { CATEGORIES } from "./config/categories";
+import API_BASE_URL from "./config/api";
 
 function AddBlog() {
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ function AddBlog() {
         formData.append("image", image);
       }
 
-      const res = await fetch("http://localhost:5001/api/blogs/addblog", {
+      const res = await fetch(`${API_BASE_URL}/api/blogs/addblog`, {
         method: "POST",
         credentials: "include",
         body: formData,

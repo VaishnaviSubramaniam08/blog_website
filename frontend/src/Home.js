@@ -7,6 +7,7 @@ import FeaturedPost from "./FeaturedPost";
 import RecentPosts from "./RecentPosts";
 import ChatIcon from "./components/ChatIcon";
 import ChatPopup from "./components/ChatPopup";
+import API_BASE_URL from "./config/api";
 
 const styles = `
   .main-content-area {
@@ -59,7 +60,7 @@ function Home() {
 
   const fetchBlogs = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/blogs/getblog");
+      const res = await fetch(`${API_BASE_URL}/api/blogs/getblog`);
       const data = await res.json();
       setBlogs(data);
     } catch (error) {

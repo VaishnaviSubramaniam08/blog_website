@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
+import API_BASE_URL from "./config/api";
 
 const AuthContext = createContext();
 
@@ -22,7 +23,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/users/me", {
+      const res = await fetch(`${API_BASE_URL}/api/users/me`, {
         method: "GET",
         credentials: "include",
       });
@@ -51,7 +52,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-    const res = await fetch("http://localhost:5001/api/users/login", {
+    const res = await fetch(`${API_BASE_URL}/api/users/login`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -71,7 +72,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (name, email, password) => {
-    const res = await fetch("http://localhost:5001/api/users/register", {
+    const res = await fetch(`${API_BASE_URL}/api/users/register`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -91,7 +92,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await fetch("http://localhost:5001/api/users/logout", {
+      await fetch(`${API_BASE_URL}/api/users/logout`, {
         method: "POST",
         credentials: "include",
       });

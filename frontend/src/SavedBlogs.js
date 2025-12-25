@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import BlogCard from "./BlogCard";
+import API_BASE_URL from "./config/api";
 
 const styles = `
   @media (max-width: 1024px) {
@@ -36,7 +37,7 @@ function SavedBlogs() {
 
   const fetchSavedBlogs = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/blogs/saved/all", {
+      const res = await fetch(`${API_BASE_URL}/api/blogs/saved/all`, {
         method: "GET",
         credentials: "include",
       });

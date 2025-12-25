@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
+import API_BASE_URL from "../config/api";
 function ChatPopup({ room, roomTitle, onClose }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -24,7 +25,7 @@ function ChatPopup({ room, roomTitle, onClose }) {
     const initializeChat = async () => {
       try {
         // Fetch chat token from backend
-        const tokenRes = await fetch("http://localhost:5001/api/users/chat-token", {
+        const tokenRes = await fetch(`${API_BASE_URL}/api/users/chat-token`, {
           method: "GET",
           credentials: "include",
         });
@@ -39,7 +40,7 @@ function ChatPopup({ room, roomTitle, onClose }) {
         console.log("Chat token received");
 
         // Connect to Socket.IO with token
-        const newSocket = io("http://localhost:5001", {
+        const newSocket = io(API_BASE_URL, {
           auth: { token: chatToken },
           transports: ["websocket", "polling"],
           reconnection: true,
@@ -105,7 +106,7 @@ function ChatPopup({ room, roomTitle, onClose }) {
         setSocket(newSocket);
 
         // Fetch previous messages
-        fetch(`http://localhost:5001/api/chat/messages/${room}`, {
+        fetch(`${API_BASE_URL}/api/chat/messages/${room}`, {
           credentials: "include",
         })
           .then((res) => res.json())

@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "./config/api";
 
 function RecentPosts({ blogs, onCategoryClick, selectedCategory }) {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ function RecentPosts({ blogs, onCategoryClick, selectedCategory }) {
               {blog.image && (
                 <div className="recent-post-thumbnail">
                   <img
-                    src={`http://localhost:5001/uploads/${blog.image}`}
+                    src={`${API_BASE_URL}/uploads/${blog.image}`}
                     alt={blog.title}
                   />
                 </div>

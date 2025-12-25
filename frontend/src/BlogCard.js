@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCategoryColor } from "./config/categories";
+import API_BASE_URL from "./config/api";
 
 function BlogCard({ blog, isLoggedIn, onCategoryClick }) {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ function BlogCard({ blog, isLoggedIn, onCategoryClick }) {
 
     try {
       const res = await fetch(
-        `http://localhost:5001/api/blogs/${blog._id}/like`,
+        `${API_BASE_URL}/api/blogs/${blog._id}/like`,
         { method: "PATCH", credentials: "include" }
       );
 
@@ -45,7 +46,7 @@ function BlogCard({ blog, isLoggedIn, onCategoryClick }) {
 
     try {
       const res = await fetch(
-        `http://localhost:5001/api/blogs/${blog._id}/save`,
+        `${API_BASE_URL}/api/blogs/${blog._id}/save`,
         { method: "PATCH", credentials: "include" }
       );
 
@@ -90,7 +91,7 @@ function BlogCard({ blog, isLoggedIn, onCategoryClick }) {
     >
       {blog.image && (
         <img
-          src={`http://localhost:5001/uploads/${blog.image}`}
+          src={`${API_BASE_URL}/uploads/${blog.image}`}
           alt={blog.title}
           style={{
             width: "100%",

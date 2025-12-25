@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "./config/api";
 
 function FeaturedPost({ blog }) {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ function FeaturedPost({ blog }) {
         {blog.image && (
           <div className="featured-image">
             <img
-              src={`http://localhost:5001/uploads/${blog.image}`}
+              src={`${API_BASE_URL}/uploads/${blog.image}`}
               alt={blog.title}
             />
           </div>

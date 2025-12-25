@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import Navbar from "./Navbar";
 import { CATEGORIES } from "./config/categories";
+import API_BASE_URL from "./config/api";
 
 function EditBlog() {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ function EditBlog() {
 
   const fetchBlog = async () => {
     try {
-      const res = await fetch(`http://localhost:5001/api/blogs/${id}`);
+      const res = await fetch(`${API_BASE_URL}/api/blogs/${id}`);
       const data = await res.json();
 
       // Check if user is the author
@@ -42,7 +43,7 @@ function EditBlog() {
       setExistingImage(data.image);
       setSelectedCategories(data.categories || []);
       if (data.image) {
-        setImagePreview(`http://localhost:5001/uploads/${data.image}`);
+        setImagePreview(`${API_BASE_URL}/uploads/${data.image}`);
       }
     } catch (error) {
       console.error("Error fetching blog:", error);
@@ -92,7 +93,7 @@ function EditBlog() {
         formData.append("image", image);
       }
 
-      const res = await fetch(`http://localhost:5001/api/blogs/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/blogs/${id}`, {
         method: "PUT",
         credentials: "include",
         body: formData,

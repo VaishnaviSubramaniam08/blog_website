@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import ChatIcon from "./components/ChatIcon";
 import ChatPopup from "./components/ChatPopup";
+import API_BASE_URL from "./config/api";
 
 function BlogDetail() {
   const { id } = useParams();
@@ -24,7 +25,7 @@ function BlogDetail() {
 
   const fetchBlogDetail = async () => {
     try {
-      const res = await fetch(`http://localhost:5001/api/blogs/${id}`);
+      const res = await fetch(`${API_BASE_URL}/api/blogs/${id}`);
       const data = await res.json();
       setBlog(data);
     } catch (error) {
@@ -41,7 +42,7 @@ function BlogDetail() {
     }
 
     try {
-      const res = await fetch(`http://localhost:5001/api/blogs/${id}/like`, {
+      const res = await fetch(`${API_BASE_URL}/api/blogs/${id}/like`, {
         method: "PATCH",
         credentials: "include",
       });
@@ -63,7 +64,7 @@ function BlogDetail() {
     }
 
     try {
-      const res = await fetch(`http://localhost:5001/api/blogs/${id}/save`, {
+      const res = await fetch(`${API_BASE_URL}/api/blogs/${id}/save`, {
         method: "PATCH",
         credentials: "include",
       });
@@ -92,7 +93,7 @@ function BlogDetail() {
     }
 
     try {
-      const res = await fetch(`http://localhost:5001/api/blogs/${id}/comment`, {
+      const res = await fetch(`${API_BASE_URL}/api/blogs/${id}/comment`, {
         method: "PATCH",
         credentials: "include",
         headers: {
@@ -117,7 +118,7 @@ function BlogDetail() {
     }
 
     try {
-      const res = await fetch(`http://localhost:5001/api/blogs/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/blogs/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -153,7 +154,7 @@ function BlogDetail() {
 
     try {
       const res = await fetch(
-        `http://localhost:5001/api/blogs/${id}/comment/${commentId}`,
+        `${API_BASE_URL}/api/blogs/${id}/comment/${commentId}`,
         {
           method: "PUT",
           credentials: "include",
@@ -186,7 +187,7 @@ function BlogDetail() {
 
     try {
       const res = await fetch(
-        `http://localhost:5001/api/blogs/${id}/comment/${commentId}`,
+        `${API_BASE_URL}/api/blogs/${id}/comment/${commentId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -251,7 +252,7 @@ function BlogDetail() {
         {blog.image && (
           <div style={styles.imageContainer}>
             <img
-              src={`http://localhost:5001/uploads/${blog.image}`}
+              src={`${API_BASE_URL}/uploads/${blog.image}`}
               alt={blog.title}
               style={styles.blogImage}
             />
