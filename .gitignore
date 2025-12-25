@@ -4,6 +4,13 @@ nul
 # Node
 node_modules/
 
+# Frontend build output
+frontend/dist/
+frontend/build/
+
+# Backend build and uploads
+server/uploads/
+
 # Environment files
 .env
 .env.local
@@ -15,3 +22,7 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Dependencies lock files
+package-lock.json
+yarn.lock
