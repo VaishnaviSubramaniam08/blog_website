@@ -225,376 +225,574 @@ function BlogDetail() {
 
   if (!blog) {
     return (
-      <div style={styles.container}>
-        <p style={{ textAlign: "center" }}>Blog not found</p>
-        <button style={styles.backButton} onClick={() => navigate("/")}>
-          Back to Home
-        </button>
-      </div>
+      <>
+        <style>{blogDetailStyles}</style>
+        <div className="blog-detail-container">
+          <div className="blog-detail-content">
+            <p style={{ textAlign: "center" }}>Blog not found</p>
+            <button className="blog-detail-back-button" onClick={() => navigate("/")}>
+              Back to Home
+            </button>
+          </div>
+        </div>
+      </>
     );
   }
 
   return (
-    <div style={styles.container}>
-      <div style={styles.content}>
-        <button style={styles.backButton} onClick={() => navigate("/")}>
-          ← Back to Home
-        </button>
+    <>
+      <style>{blogDetailStyles}</style>
+      <div className="blog-detail-container">
+        <div className="blog-detail-content">
+          <button className="blog-detail-back-button" onClick={() => navigate("/")}>
+            ← Back to Home
+          </button>
 
-        <h1 style={styles.title}>{blog.title}</h1>
+          <h1 className="blog-detail-title">{blog.title}</h1>
 
-        <div style={styles.meta}>
-          <span>By {blog.authorId?.name || "Unknown"}</span>
-          <span>•</span>
-          <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
-        </div>
-
-        {blog.image && (
-          <div style={styles.imageContainer}>
-            <img
-              src={`${API_BASE_URL}/uploads/${blog.image}`}
-              alt={blog.title}
-              style={styles.blogImage}
-            />
+          <div className="blog-detail-meta">
+            <span>By {blog.authorId?.name || "Unknown"}</span>
+            <span>•</span>
+            <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
           </div>
-        )}
 
-        <div style={styles.actions}>
-          <button
-            style={{
-              ...styles.actionButton,
-              backgroundColor: isLiked ? "#4a6cff" : "white",
-              color: isLiked ? "white" : "#4a6cff",
-            }}
-            onClick={handleLike}
-            disabled={!isLoggedIn}
-          >
-            ❤️ Like ({blog.likes?.length || 0})
-          </button>
-
-          <button
-            style={{
-              ...styles.actionButton,
-              backgroundColor: isSaved ? "#4a6cff" : "white",
-              color: isSaved ? "white" : "#4a6cff",
-            }}
-            onClick={handleSave}
-            disabled={!isLoggedIn}
-          >
-            🔖 {isSaved ? "Saved" : "Save"}
-          </button>
-
-          {isLoggedIn && user && blog.authorId?._id === user._id && (
-            <>
-              <button
-                style={{
-                  ...styles.actionButton,
-                  backgroundColor: "#ffa502",
-                  color: "white",
-                  border: "1px solid #ffa502",
-                }}
-                onClick={() => navigate(`/edit-blog/${id}`)}
-              >
-                ✏️ Edit
-              </button>
-              <button
-                style={{
-                  ...styles.actionButton,
-                  backgroundColor: "#ff4757",
-                  color: "white",
-                  border: "1px solid #ff4757",
-                }}
-                onClick={handleDelete}
-              >
-                🗑️ Delete
-              </button>
-            </>
+          {blog.image && (
+            <div className="blog-detail-image-container">
+              <img
+                src={`${API_BASE_URL}/uploads/${blog.image}`}
+                alt={blog.title}
+                className="blog-detail-image"
+              />
+            </div>
           )}
-        </div>
 
-        <div style={styles.blogContent}>
-          <p>{blog.content}</p>
-        </div>
-
-        <div style={styles.commentsSection}>
-          <h3>Comments ({blog.comments?.length || 0})</h3>
-
-          <form onSubmit={handleCommentSubmit} style={styles.commentForm}>
-            <textarea
-              style={styles.commentInput}
-              placeholder={
-                isLoggedIn
-                  ? "Write a comment..."
-                  : "Login to write a comment"
-              }
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              disabled={!isLoggedIn}
-            />
+          <div className="blog-detail-actions">
             <button
-              type="submit"
-              style={styles.commentButton}
+              className={`blog-detail-action-button ${isLiked ? 'liked' : ''}`}
+              onClick={handleLike}
               disabled={!isLoggedIn}
             >
-              Post Comment
+              ❤️ Like ({blog.likes?.length || 0})
             </button>
-          </form>
 
-          <div style={styles.commentsList}>
-            {blog.comments && blog.comments.length > 0 ? (
-              blog.comments.map((c) => (
-                <div key={c._id} style={styles.comment}>
-                  <div style={styles.commentHeader}>
-                    <div>
-                      <strong>{c.userId?.name || "Anonymous"}</strong>
-                      <span style={styles.commentDate}>
-                        {new Date(c.createdAt).toLocaleString()}
-                      </span>
-                    </div>
-                    {isLoggedIn && user && c.userId?._id === user._id && (
-                      <div style={styles.commentActions}>
-                        <button
-                          style={styles.commentActionBtn}
-                          onClick={() => handleEditComment(c._id, c.message)}
-                        >
-                          ✏️ Edit
-                        </button>
-                        <button
-                          style={{ ...styles.commentActionBtn, color: "#ff4757" }}
-                          onClick={() => handleDeleteComment(c._id)}
-                        >
-                          🗑️ Delete
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  {editingCommentId === c._id ? (
-                    <div style={styles.editCommentForm}>
-                      <textarea
-                        style={styles.editCommentInput}
-                        value={editCommentText}
-                        onChange={(e) => setEditCommentText(e.target.value)}
-                      />
-                      <div style={styles.editCommentButtons}>
-                        <button
-                          style={styles.updateButton}
-                          onClick={() => handleUpdateComment(c._id)}
-                        >
-                          Update
-                        </button>
-                        <button
-                          style={styles.cancelButton}
-                          onClick={handleCancelEditComment}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <p style={styles.commentText}>{c.message}</p>
-                  )}
-                </div>
-              ))
-            ) : (
-              <p style={{ color: "#999", textAlign: "center" }}>
-                No comments yet. Be the first to comment!
-              </p>
+            <button
+              className={`blog-detail-action-button ${isSaved ? 'saved' : ''}`}
+              onClick={handleSave}
+              disabled={!isLoggedIn}
+            >
+              🔖 {isSaved ? "Saved" : "Save"}
+            </button>
+
+            {isLoggedIn && user && blog.authorId?._id === user._id && (
+              <>
+                <button
+                  className="blog-detail-action-button edit"
+                  onClick={() => navigate(`/edit-blog/${id}`)}
+                >
+                  ✏️ Edit
+                </button>
+                <button
+                  className="blog-detail-action-button delete"
+                  onClick={handleDelete}
+                >
+                  🗑️ Delete
+                </button>
+              </>
             )}
           </div>
-        </div>
-      </div>
 
-      {/* Chat Components */}
-      <ChatIcon onClick={handleChatClick} />
-      {isChatOpen && (
-        <ChatPopup
-          room={`post-${id}`}
-          roomTitle={`Chat: ${blog?.title || "Blog Discussion"}`}
-          onClose={() => setIsChatOpen(false)}
-        />
-      )}
-    </div>
+          <div className="blog-detail-blog-content">
+            <p>{blog.content}</p>
+          </div>
+
+          <div className="blog-detail-comments-section">
+            <h3>Comments ({blog.comments?.length || 0})</h3>
+
+            <form onSubmit={handleCommentSubmit} className="blog-detail-comment-form">
+              <textarea
+                className="blog-detail-comment-input"
+                placeholder={
+                  isLoggedIn
+                    ? "Write a comment..."
+                    : "Login to write a comment"
+                }
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                disabled={!isLoggedIn}
+              />
+              <button
+                type="submit"
+                className="blog-detail-comment-button"
+                disabled={!isLoggedIn}
+              >
+                Post Comment
+              </button>
+            </form>
+
+            <div className="blog-detail-comments-list">
+              {blog.comments && blog.comments.length > 0 ? (
+                blog.comments.map((c) => (
+                  <div key={c._id} className="blog-detail-comment">
+                    <div className="blog-detail-comment-header">
+                      <div>
+                        <strong>{c.userId?.name || "Anonymous"}</strong>
+                        <span className="blog-detail-comment-date">
+                          {new Date(c.createdAt).toLocaleString()}
+                        </span>
+                      </div>
+                      {isLoggedIn && user && c.userId?._id === user._id && (
+                        <div className="blog-detail-comment-actions">
+                          <button
+                            className="blog-detail-comment-action-btn"
+                            onClick={() => handleEditComment(c._id, c.message)}
+                          >
+                            ✏️ Edit
+                          </button>
+                          <button
+                            className="blog-detail-comment-action-btn delete"
+                            onClick={() => handleDeleteComment(c._id)}
+                          >
+                            🗑️ Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    {editingCommentId === c._id ? (
+                      <div className="blog-detail-edit-comment-form">
+                        <textarea
+                          className="blog-detail-edit-comment-input"
+                          value={editCommentText}
+                          onChange={(e) => setEditCommentText(e.target.value)}
+                        />
+                        <div className="blog-detail-edit-comment-buttons">
+                          <button
+                            className="blog-detail-update-button"
+                            onClick={() => handleUpdateComment(c._id)}
+                          >
+                            Update
+                          </button>
+                          <button
+                            className="blog-detail-cancel-button"
+                            onClick={handleCancelEditComment}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="blog-detail-comment-text">{c.message}</p>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <p style={{ color: "#999", textAlign: "center" }}>
+                  No comments yet. Be the first to comment!
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Components */}
+        <ChatIcon onClick={handleChatClick} />
+        {isChatOpen && (
+          <ChatPopup
+            room={`post-${id}`}
+            roomTitle={`Chat: ${blog?.title || "Blog Discussion"}`}
+            onClose={() => setIsChatOpen(false)}
+          />
+        )}
+      </div>
+    </>
   );
 }
 
-const styles = {
-  container: {
-    minHeight: "100vh",
-    backgroundColor: "#f8f9fc",
-    padding: "40px 20px",
-  },
-  content: {
-    maxWidth: "800px",
-    margin: "0 auto",
-    backgroundColor: "white",
-    padding: "40px",
-    borderRadius: "16px",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-  },
-  backButton: {
-    padding: "8px 16px",
-    backgroundColor: "white",
-    border: "1px solid #e0e0e0",
-    borderRadius: "8px",
-    cursor: "pointer",
-    marginBottom: "20px",
-    color: "#4a6cff",
-    fontWeight: 600,
-  },
-  title: {
-    fontSize: "2.5rem",
-    fontWeight: 800,
-    color: "#1e272e",
-    marginBottom: "20px",
-  },
-  meta: {
-    display: "flex",
-    gap: "10px",
-    fontSize: "0.9rem",
-    color: "#95a5a6",
-    marginBottom: "20px",
-  },
-  actions: {
-    display: "flex",
-    gap: "10px",
-    marginBottom: "30px",
-  },
-  actionButton: {
-    padding: "10px 20px",
-    border: "1px solid #4a6cff",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontWeight: 600,
-    fontSize: "0.9rem",
-    transition: "all 0.2s ease",
-  },
-  blogContent: {
-    fontSize: "1.1rem",
-    lineHeight: 1.8,
-    color: "#2d3436",
-    marginBottom: "40px",
-    whiteSpace: "pre-wrap",
-  },
-  commentsSection: {
-    borderTop: "2px solid #edf2f7",
-    paddingTop: "30px",
-  },
-  commentForm: {
-    marginTop: "20px",
-    marginBottom: "30px",
-  },
-  commentInput: {
-    width: "100%",
-    padding: "12px",
-    borderRadius: "8px",
-    border: "1px solid #e0e0e0",
-    fontSize: "1rem",
-    marginBottom: "10px",
-    minHeight: "80px",
-    fontFamily: "inherit",
-    resize: "vertical",
-  },
-  commentButton: {
-    padding: "10px 20px",
-    backgroundColor: "#4a6cff",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontWeight: 600,
-    fontSize: "0.9rem",
-  },
-  commentsList: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "20px",
-  },
-  comment: {
-    backgroundColor: "#f8f9fc",
-    padding: "15px",
-    borderRadius: "8px",
-    border: "1px solid #edf2f7",
-  },
-  commentHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "8px",
-  },
-  commentActions: {
-    display: "flex",
-    gap: "8px",
-  },
-  commentActionBtn: {
-    padding: "4px 10px",
-    fontSize: "0.75rem",
-    fontWeight: 600,
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-    backgroundColor: "#f8f9fc",
-    color: "#4a6cff",
-    transition: "all 0.2s ease",
-  },
-  editCommentForm: {
-    marginTop: "10px",
-  },
-  editCommentInput: {
-    width: "100%",
-    padding: "10px",
-    borderRadius: "8px",
-    border: "1px solid #e0e0e0",
-    fontSize: "0.95rem",
-    minHeight: "80px",
-    fontFamily: "inherit",
-    resize: "vertical",
-    marginBottom: "10px",
-  },
-  editCommentButtons: {
-    display: "flex",
-    gap: "10px",
-  },
-  updateButton: {
-    padding: "8px 20px",
-    backgroundColor: "#4a6cff",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    fontSize: "0.85rem",
-    fontWeight: 600,
-    cursor: "pointer",
-  },
-  cancelButton: {
-    padding: "8px 20px",
-    backgroundColor: "#f8f9fc",
-    color: "#636e72",
-    border: "1px solid #e0e0e0",
-    borderRadius: "8px",
-    fontSize: "0.85rem",
-    fontWeight: 600,
-    cursor: "pointer",
-  },
-  commentDate: {
-    fontSize: "0.8rem",
-    color: "#95a5a6",
-  },
-  commentText: {
-    margin: 0,
-    color: "#2d3436",
-  },
-  imageContainer: {
-    marginBottom: "30px",
-    width: "100%",
-    overflow: "hidden",
-    borderRadius: "12px",
-  },
-  blogImage: {
-    width: "100%",
-    height: "auto",
-    maxHeight: "500px",
-    objectFit: "cover",
-    borderRadius: "12px",
-  },
-};
+const blogDetailStyles = `
+  .blog-detail-container {
+    min-height: 100vh;
+    background-color: #f8f9fc;
+    padding: 40px 20px;
+  }
+
+  .blog-detail-content {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+
+  .blog-detail-back-button {
+    padding: 8px 16px;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    color: #4a6cff;
+    font-weight: 600;
+    min-height: 40px;
+  }
+
+  .blog-detail-back-button:hover {
+    background-color: #f8f9fc;
+  }
+
+  .blog-detail-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #1e272e;
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+
+  .blog-detail-meta {
+    display: flex;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: #95a5a6;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .blog-detail-image-container {
+    margin-bottom: 30px;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 12px;
+  }
+
+  .blog-detail-image {
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
+  .blog-detail-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+
+  .blog-detail-action-button {
+    padding: 10px 20px;
+    border: 1px solid #4a6cff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    background-color: white;
+    color: #4a6cff;
+    min-height: 40px;
+  }
+
+  .blog-detail-action-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(74, 108, 255, 0.2);
+  }
+
+  .blog-detail-action-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .blog-detail-action-button.liked,
+  .blog-detail-action-button.saved {
+    background-color: #4a6cff;
+    color: white;
+  }
+
+  .blog-detail-action-button.edit {
+    background-color: #ffa502;
+    color: white;
+    border: 1px solid #ffa502;
+  }
+
+  .blog-detail-action-button.delete {
+    background-color: #ff4757;
+    color: white;
+    border: 1px solid #ff4757;
+  }
+
+  .blog-detail-blog-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #2d3436;
+    margin-bottom: 40px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .blog-detail-comments-section {
+    border-top: 2px solid #edf2f7;
+    padding-top: 30px;
+  }
+
+  .blog-detail-comment-form {
+    margin-top: 20px;
+    margin-bottom: 30px;
+  }
+
+  .blog-detail-comment-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    min-height: 80px;
+    font-family: inherit;
+    resize: vertical;
+    box-sizing: border-box;
+  }
+
+  .blog-detail-comment-input:focus {
+    outline: none;
+    border-color: #4a6cff;
+    box-shadow: 0 0 0 3px rgba(74, 108, 255, 0.1);
+  }
+
+  .blog-detail-comment-button {
+    padding: 10px 20px;
+    background-color: #4a6cff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    min-height: 40px;
+  }
+
+  .blog-detail-comment-button:hover:not(:disabled) {
+    background-color: #3a5ce5;
+  }
+
+  .blog-detail-comment-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .blog-detail-comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .blog-detail-comment {
+    background-color: #f8f9fc;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #edf2f7;
+  }
+
+  .blog-detail-comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    gap: 10px;
+  }
+
+  .blog-detail-comment-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .blog-detail-comment-action-btn {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #f8f9fc;
+    color: #4a6cff;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .blog-detail-comment-action-btn:hover {
+    background-color: #e8ecff;
+  }
+
+  .blog-detail-comment-action-btn.delete {
+    color: #ff4757;
+  }
+
+  .blog-detail-comment-date {
+    font-size: 0.8rem;
+    color: #95a5a6;
+    display: block;
+    margin-top: 4px;
+  }
+
+  .blog-detail-comment-text {
+    margin: 0;
+    color: #2d3436;
+    word-wrap: break-word;
+  }
+
+  .blog-detail-edit-comment-form {
+    margin-top: 10px;
+  }
+
+  .blog-detail-edit-comment-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    font-size: 0.95rem;
+    min-height: 80px;
+    font-family: inherit;
+    resize: vertical;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+  }
+
+  .blog-detail-edit-comment-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .blog-detail-update-button {
+    padding: 8px 20px;
+    background-color: #4a6cff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 36px;
+  }
+
+  .blog-detail-cancel-button {
+    padding: 8px 20px;
+    background-color: #f8f9fc;
+    color: #636e72;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 36px;
+  }
+
+  /* Tablet Responsiveness */
+  @media (max-width: 768px) {
+    .blog-detail-container {
+      padding: 20px 15px;
+    }
+
+    .blog-detail-content {
+      padding: 25px 20px;
+      border-radius: 12px;
+    }
+
+    .blog-detail-title {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+    }
+
+    .blog-detail-meta {
+      font-size: 0.85rem;
+    }
+
+    .blog-detail-image {
+      max-height: 350px;
+    }
+
+    .blog-detail-actions {
+      gap: 8px;
+    }
+
+    .blog-detail-action-button {
+      padding: 8px 14px;
+      font-size: 0.85rem;
+    }
+
+    .blog-detail-blog-content {
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .blog-detail-comment-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .blog-detail-comment-actions {
+      margin-top: 8px;
+    }
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 480px) {
+    .blog-detail-container {
+      padding: 15px 10px;
+    }
+
+    .blog-detail-content {
+      padding: 20px 15px;
+      border-radius: 8px;
+    }
+
+    .blog-detail-title {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+    }
+
+    .blog-detail-meta {
+      font-size: 0.8rem;
+      gap: 8px;
+    }
+
+    .blog-detail-image {
+      max-height: 250px;
+    }
+
+    .blog-detail-actions {
+      gap: 6px;
+    }
+
+    .blog-detail-action-button {
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      flex: 1 1 auto;
+      min-width: 80px;
+    }
+
+    .blog-detail-blog-content {
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .blog-detail-comment-input {
+      font-size: 0.95rem;
+      padding: 10px;
+    }
+
+    .blog-detail-comment-button {
+      width: 100%;
+    }
+
+    .blog-detail-comment {
+      padding: 12px;
+    }
+
+    .blog-detail-comment-action-btn {
+      font-size: 0.7rem;
+      padding: 4px 8px;
+    }
+  }
+`;
 
 export default BlogDetail;

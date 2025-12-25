@@ -6,9 +6,11 @@ function Navbar({ onSearch }) {
   const navigate = useNavigate();
   const { isLoggedIn, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     await logout();
+    setMobileMenuOpen(false);
     navigate("/");
   };
 
@@ -28,6 +30,11 @@ function Navbar({ onSearch }) {
     }
   };
 
+  const handleNavigation = (path) => {
+    navigate(path);
+    setMobileMenuOpen(false);
+  };
+
   return (
     <>
       <style>{navbarStyles}</style>
@@ -39,12 +46,8 @@ function Navbar({ onSearch }) {
 
           <ul className="navbar-menu">
             <li onClick={() => navigate("/")}>Home</li>
-      
             <li>About Us</li>
             <li>Features</li>
-          
-
-          
           </ul>
 
           <div className="navbar-actions">
@@ -91,7 +94,63 @@ function Navbar({ onSearch }) {
               </button>
             )}
           </div>
+
+          {/* Hamburger Menu Button */}
+          <button
+            className={`hamburger-menu ${mobileMenuOpen ? 'open' : ''}`}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div className="mobile-menu-overlay" onClick={() => setMobileMenuOpen(false)}>
+            <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
+              <ul className="mobile-menu-list">
+                <li onClick={() => handleNavigation("/")}>Home</li>
+                <li>About Us</li>
+                <li>Features</li>
+              </ul>
+
+              <div className="mobile-menu-actions">
+                {isLoggedIn ? (
+                  <>
+                    <button
+                      className="navbar-button primary mobile-full"
+                      onClick={() => handleNavigation("/add-blog")}
+                    >
+                      Create Post
+                    </button>
+                    <button
+                      className="navbar-button secondary mobile-full"
+                      onClick={() => handleNavigation("/saved")}
+                    >
+                      Saved
+                    </button>
+                    <button
+                      className="navbar-button logout mobile-full"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    className="navbar-button primary mobile-full"
+                    onClick={() => handleNavigation("/login")}
+                  >
+                    Login
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </nav>
     </>
   );
@@ -114,10 +173,12 @@ const navbarStyles = `
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: relative;
   }
 
   .navbar-logo {
     cursor: pointer;
+    z-index: 1002;
   }
 
   .navbar-logo h2 {
@@ -192,6 +253,7 @@ const navbarStyles = `
     cursor: pointer;
     transition: all 0.2s ease;
     border: none;
+    min-height: 40px;
   }
 
   .navbar-button.primary {
@@ -225,6 +287,110 @@ const navbarStyles = `
     background-color: #fff5f5;
   }
 
+  /* Hamburger Menu Button */
+  .hamburger-menu {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 25px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1002;
+  }
+
+  .hamburger-menu span {
+    width: 30px;
+    height: 3px;
+    background-color: #2d3436;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+  }
+
+  .hamburger-menu.open span:nth-child(1) {
+    transform: rotate(45deg) translateY(8px);
+  }
+
+  .hamburger-menu.open span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .hamburger-menu.open span:nth-child(3) {
+    transform: rotate(-45deg) translateY(-8px);
+  }
+
+  /* Mobile Menu Overlay */
+  .mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background-color: #ffffff;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    padding: 80px 20px 20px;
+    overflow-y: auto;
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+
+  .mobile-menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px 0;
+  }
+
+  .mobile-menu-list li {
+    padding: 15px 10px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #2d3436;
+    cursor: pointer;
+    border-bottom: 1px solid #edf2f7;
+    transition: background-color 0.2s ease;
+  }
+
+  .mobile-menu-list li:hover {
+    background-color: #f8f9fc;
+    color: #4a6cff;
+  }
+
+  .mobile-menu-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .navbar-button.mobile-full {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
+
   @media (max-width: 1024px) {
     .navbar-menu {
       display: none;
@@ -247,22 +413,45 @@ const navbarStyles = `
     }
 
     .navbar-actions {
-      flex-wrap: wrap;
-      gap: 8px;
+      display: none;
+    }
+
+    .hamburger-menu {
+      display: flex;
     }
 
     .search-form {
       width: 100%;
       order: 3;
+      margin-top: 10px;
     }
 
     .search-input {
       width: 100%;
     }
 
-    .navbar-button {
-      padding: 6px 12px;
-      font-size: 0.85rem;
+    .mobile-menu {
+      width: 85%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .navbar-container {
+      padding: 10px 15px;
+    }
+
+    .navbar-logo h2 {
+      font-size: 1.3rem;
+    }
+
+    .mobile-menu {
+      width: 90%;
+      padding: 70px 15px 15px;
+    }
+
+    .mobile-menu-list li {
+      font-size: 1rem;
+      padding: 12px 8px;
     }
   }
 `;

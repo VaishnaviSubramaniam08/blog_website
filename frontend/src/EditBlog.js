@@ -118,59 +118,13 @@ function EditBlog() {
     navigate(`/blog/${id}`);
   };
 
-  const pageStyle = {
-    minHeight: "100vh",
-    backgroundColor: "#f8f9fc",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: "40px 20px",
-    fontFamily: "'Inter', system-ui, sans-serif",
-  };
-
-  const formStyle = {
-    backgroundColor: "#fff",
-    padding: 40,
-    borderRadius: 16,
-    boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
-    width: "100%",
-    maxWidth: 700,
-  };
-
-  const inputStyle = {
-    width: "100%",
-    padding: "12px 16px",
-    marginBottom: 20,
-    borderRadius: 8,
-    border: "1px solid #ccc",
-    fontSize: "1rem",
-  };
-
-  const buttonStyle = {
-    padding: "12px 28px",
-    backgroundColor: "#4a6cff",
-    color: "white",
-    border: "none",
-    borderRadius: 12,
-    fontSize: "1rem",
-    fontWeight: 600,
-    cursor: "pointer",
-    marginRight: "10px",
-  };
-
-  const cancelButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: "white",
-    color: "#636e72",
-    border: "2px solid #e0e0e0",
-  };
-
   if (loading) {
     return (
       <>
         <Navbar />
-        <div style={pageStyle}>
-          <div style={{ textAlign: "center", padding: "40px" }}>
+        <style>{editBlogStyles}</style>
+        <div className="edit-blog-page">
+          <div className="edit-blog-loading">
             <p>Loading...</p>
           </div>
         </div>
@@ -181,12 +135,13 @@ function EditBlog() {
   return (
     <>
       <Navbar />
-      <div style={pageStyle}>
-        <form style={formStyle} onSubmit={handleSubmit}>
-          <h2 style={{ marginBottom: 20, color: "#1e272e" }}>Edit Blog Post</h2>
+      <style>{editBlogStyles}</style>
+      <div className="edit-blog-page">
+        <form className="edit-blog-form" onSubmit={handleSubmit}>
+          <h2 className="edit-blog-title">Edit Blog Post</h2>
 
           <input
-            style={inputStyle}
+            className="edit-blog-input"
             type="text"
             placeholder="Blog Title"
             value={title}
@@ -195,37 +150,34 @@ function EditBlog() {
           />
 
           <textarea
-            style={{ ...inputStyle, height: 250 }}
+            className="edit-blog-textarea"
             placeholder="Write your blog content here..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
             required
           />
 
-          <div style={{ marginBottom: 20 }}>
-            <label style={{ display: "block", marginBottom: 12, fontWeight: 600, color: "#2d3436" }}>
+          <div className="edit-blog-categories-section">
+            <label className="edit-blog-label">
               Categories (Select one or more)
             </label>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: 20 }}>
+            <div className="edit-blog-categories-grid">
               {CATEGORIES.map((category) => (
                 <button
                   key={category.name}
                   type="button"
                   onClick={() => toggleCategory(category.name)}
+                  className={`edit-blog-category-button ${
+                    selectedCategories.includes(category.name) ? 'selected' : ''
+                  }`}
                   style={{
-                    padding: "8px 16px",
-                    borderRadius: "20px",
-                    border: selectedCategories.includes(category.name)
-                      ? `2px solid ${category.color}`
-                      : "2px solid #e0e0e0",
+                    borderColor: selectedCategories.includes(category.name)
+                      ? category.color
+                      : '#e0e0e0',
                     backgroundColor: selectedCategories.includes(category.name)
                       ? category.color
-                      : "white",
-                    color: selectedCategories.includes(category.name) ? "white" : "#2d3436",
-                    cursor: "pointer",
-                    fontSize: "0.9rem",
-                    fontWeight: selectedCategories.includes(category.name) ? 600 : 500,
-                    transition: "all 0.2s ease",
+                      : 'white',
+                    color: selectedCategories.includes(category.name) ? 'white' : '#2d3436',
                   }}
                 >
                   {category.name}
@@ -234,42 +186,38 @@ function EditBlog() {
             </div>
           </div>
 
-          <div style={{ marginBottom: 20 }}>
-            <label style={{ display: "block", marginBottom: 8, fontWeight: 600, color: "#2d3436" }}>
+          <div className="edit-blog-image-section">
+            <label className="edit-blog-label">
               Update Image (Optional)
             </label>
             <input
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              style={{ display: "block", marginBottom: 10 }}
+              className="edit-blog-file-input"
             />
             {imagePreview && (
-              <div style={{ marginTop: 10 }}>
+              <div className="edit-blog-image-preview">
                 <img
                   src={imagePreview}
                   alt="Preview"
-                  style={{ maxWidth: "100%", maxHeight: "250px", borderRadius: "8px" }}
+                  className="edit-blog-preview-image"
                 />
               </div>
             )}
           </div>
 
-          <div>
+          <div className="edit-blog-button-group">
             <button
               type="submit"
-              style={{
-                ...buttonStyle,
-                opacity: submitting ? 0.6 : 1,
-                cursor: submitting ? "not-allowed" : "pointer",
-              }}
+              className="edit-blog-submit-button"
               disabled={submitting}
             >
               {submitting ? "Saving Changes..." : "Save Changes"}
             </button>
             <button
               type="button"
-              style={cancelButtonStyle}
+              className="edit-blog-cancel-button"
               onClick={handleCancel}
             >
               Cancel
@@ -280,5 +228,270 @@ function EditBlog() {
     </>
   );
 }
+
+const editBlogStyles = `
+  .edit-blog-page {
+    min-height: 100vh;
+    background-color: #f8f9fc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .edit-blog-loading {
+    text-align: center;
+    padding: 40px;
+  }
+
+  .edit-blog-form {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: 700px;
+  }
+
+  .edit-blog-title {
+    margin-bottom: 20px;
+    color: #1e272e;
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+
+  .edit-blog-input,
+  .edit-blog-textarea {
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+  }
+
+  .edit-blog-input:focus,
+  .edit-blog-textarea:focus {
+    outline: none;
+    border-color: #4a6cff;
+    box-shadow: 0 0 0 3px rgba(74, 108, 255, 0.1);
+  }
+
+  .edit-blog-textarea {
+    min-height: 250px;
+    resize: vertical;
+  }
+
+  .edit-blog-categories-section {
+    margin-bottom: 20px;
+  }
+
+  .edit-blog-label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: #2d3436;
+    font-size: 0.95rem;
+  }
+
+  .edit-blog-categories-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .edit-blog-category-button {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 2px solid;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    background-color: white;
+    min-height: 36px;
+  }
+
+  .edit-blog-category-button.selected {
+    font-weight: 600;
+  }
+
+  .edit-blog-category-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .edit-blog-image-section {
+    margin-bottom: 20px;
+  }
+
+  .edit-blog-file-input {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+  }
+
+  .edit-blog-image-preview {
+    margin-top: 10px;
+  }
+
+  .edit-blog-preview-image {
+    max-width: 100%;
+    max-height: 250px;
+    border-radius: 8px;
+    display: block;
+  }
+
+  .edit-blog-button-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .edit-blog-submit-button {
+    padding: 12px 28px;
+    background-color: #4a6cff;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 48px;
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .edit-blog-submit-button:hover:not(:disabled) {
+    background-color: #3a5ce5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 108, 255, 0.3);
+  }
+
+  .edit-blog-submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .edit-blog-cancel-button {
+    padding: 12px 28px;
+    background-color: white;
+    color: #636e72;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 48px;
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .edit-blog-cancel-button:hover {
+    background-color: #f8f9fc;
+    border-color: #d0d0d0;
+  }
+
+  /* Tablet Responsiveness */
+  @media (max-width: 768px) {
+    .edit-blog-page {
+      padding: 30px 15px;
+    }
+
+    .edit-blog-form {
+      padding: 30px 25px;
+    }
+
+    .edit-blog-title {
+      font-size: 1.6rem;
+    }
+
+    .edit-blog-categories-grid {
+      gap: 8px;
+    }
+
+    .edit-blog-category-button {
+      padding: 7px 14px;
+      font-size: 0.85rem;
+    }
+
+    .edit-blog-button-group {
+      gap: 8px;
+    }
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 480px) {
+    .edit-blog-page {
+      padding: 20px 10px;
+      align-items: flex-start;
+    }
+
+    .edit-blog-form {
+      padding: 25px 20px;
+      border-radius: 12px;
+    }
+
+    .edit-blog-title {
+      font-size: 1.4rem;
+      margin-bottom: 18px;
+    }
+
+    .edit-blog-input,
+    .edit-blog-textarea {
+      padding: 12px 14px;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+
+    .edit-blog-textarea {
+      min-height: 200px;
+    }
+
+    .edit-blog-label {
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    .edit-blog-categories-grid {
+      gap: 6px;
+    }
+
+    .edit-blog-category-button {
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      flex: 1 1 auto;
+      min-width: 90px;
+    }
+
+    .edit-blog-file-input {
+      font-size: 0.85rem;
+    }
+
+    .edit-blog-preview-image {
+      max-height: 180px;
+    }
+
+    .edit-blog-button-group {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .edit-blog-submit-button,
+    .edit-blog-cancel-button {
+      width: 100%;
+      padding: 14px 20px;
+      min-width: unset;
+    }
+  }
+`;
 
 export default EditBlog;
