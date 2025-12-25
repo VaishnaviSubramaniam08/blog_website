@@ -39,7 +39,7 @@ app.use('/api/users', userroutes);
 app.use('/api/blogs', blogroutes);
 app.use('/api/chat', chatRoutes); 
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/blogtalentio';
+const MONGODB_URI = process.env.MONGODB_URI;
 
 mongoose.connect(MONGODB_URI, {
   serverSelectionTimeoutMS: 5000, 
