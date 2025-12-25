@@ -49,8 +49,8 @@ export const loginController= async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "strict",
-      secure: false,
+      sameSite: "none",
+      secure: true,
     });
 
     res.json({
@@ -64,7 +64,11 @@ export const loginController= async (req, res) => {
 
 export const logoutController = async (req, res) => {
   try {
-    res.clearCookie("token");
+    res.clearCookie("token", {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
     res.json({ message: "Logged out successfully" });
   } catch (error) {
     console.error("Logout error:", error);
