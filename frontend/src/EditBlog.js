@@ -11,9 +11,7 @@ function EditBlog() {
   const { isLoggedIn, user } = useAuth();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [image, setImage] = useState(null);
-  const [existingImage, setExistingImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imageUrl, setImageUrl] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -40,11 +38,8 @@ function EditBlog() {
 
       setTitle(data.title);
       setContent(data.content);
-      setExistingImage(data.image);
+      setImageUrl(data.image || "");
       setSelectedCategories(data.categories || []);
-      if (data.image) {
-        setImagePreview(`${API_BASE_URL}/uploads/${data.image}`);
-      }
     } catch (error) {
       console.error("Error fetching blog:", error);
       alert("Failed to load blog");
@@ -54,17 +49,6 @@ function EditBlog() {
     }
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert("Image size should be less than 5MB");
-        return;
-      }
-      setImage(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
 
   const toggleCategory = (categoryName) => {
     if (selectedCategories.includes(categoryName)) {
@@ -85,18 +69,18 @@ function EditBlog() {
     setSubmitting(true);
 
     try {
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("content", content);
-      formData.append("categories", JSON.stringify(selectedCategories));
-      if (image) {
-        formData.append("image", image);
-      }
-
       const res = await fetch(`${API_BASE_URL}/api/blogs/${id}`, {
         method: "PUT",
         credentials: "include",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          content,
+          categories: selectedCategories,
+          image: imageUrl || null,
+        }),
       });
 
       if (res.ok) {
@@ -188,20 +172,27 @@ function EditBlog() {
 
           <div className="edit-blog-image-section">
             <label className="edit-blog-label">
-              Update Image (Optional)
+              Image URL (Optional)
             </label>
             <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="edit-blog-file-input"
+              className="edit-blog-input"
+              type="url"
+              placeholder="Enter image URL (e.g., https://example.com/image.jpg)"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
             />
-            {imagePreview && (
+            {imageUrl && (
               <div className="edit-blog-image-preview">
                 <img
-                  src={imagePreview}
+                  src={imageUrl}
                   alt="Preview"
                   className="edit-blog-preview-image"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                  onLoad={(e) => {
+                    e.target.style.display = 'block';
+                  }}
                 />
               </div>
             )}
@@ -328,12 +319,6 @@ const editBlogStyles = `
 
   .edit-blog-image-section {
     margin-bottom: 20px;
-  }
-
-  .edit-blog-file-input {
-    display: block;
-    margin-bottom: 10px;
-    font-size: 0.9rem;
   }
 
   .edit-blog-image-preview {
@@ -470,10 +455,6 @@ const editBlogStyles = `
       font-size: 0.8rem;
       flex: 1 1 auto;
       min-width: 90px;
-    }
-
-    .edit-blog-file-input {
-      font-size: 0.85rem;
     }
 
     .edit-blog-preview-image {

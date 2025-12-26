@@ -9,8 +9,7 @@ function AddBlog() {
   const { isLoggedIn } = useAuth();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imageUrl, setImageUrl] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
@@ -21,17 +20,6 @@ function AddBlog() {
     }
   }, [isLoggedIn, navigate]);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert("Image size should be less than 5MB");
-        return;
-      }
-      setImage(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
 
   const toggleCategory = (categoryName) => {
     if (selectedCategories.includes(categoryName)) {
@@ -52,18 +40,18 @@ function AddBlog() {
     setSubmitting(true);
 
     try {
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("content", content);
-      formData.append("categories", JSON.stringify(selectedCategories));
-      if (image) {
-        formData.append("image", image);
-      }
-
       const res = await fetch(`${API_BASE_URL}/api/blogs/addblog`, {
         method: "POST",
         credentials: "include",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          content,
+          categories: selectedCategories,
+          image: imageUrl || null,
+        }),
       });
 
       if (res.ok) {
@@ -148,20 +136,27 @@ function AddBlog() {
 
           <div className="add-blog-image-section">
             <label className="add-blog-label">
-              Upload Image (Optional)
+              Image URL (Optional)
             </label>
             <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="add-blog-file-input"
+              className="add-blog-input"
+              type="url"
+              placeholder="Enter image URL (e.g., https://example.com/image.jpg)"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
             />
-            {imagePreview && (
+            {imageUrl && (
               <div className="add-blog-image-preview">
                 <img
-                  src={imagePreview}
+                  src={imageUrl}
                   alt="Preview"
                   className="add-blog-preview-image"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                  onLoad={(e) => {
+                    e.target.style.display = 'block';
+                  }}
                 />
               </div>
             )}
@@ -299,12 +294,6 @@ const addBlogStyles = `
     margin-bottom: 20px;
   }
 
-  .add-blog-file-input {
-    display: block;
-    margin-bottom: 10px;
-    font-size: 0.9rem;
-  }
-
   .add-blog-image-preview {
     margin-top: 10px;
   }
@@ -417,10 +406,6 @@ const addBlogStyles = `
     .add-blog-selected-tag {
       font-size: 0.8rem;
       padding: 3px 10px;
-    }
-
-    .add-blog-file-input {
-      font-size: 0.85rem;
     }
 
     .add-blog-preview-image {

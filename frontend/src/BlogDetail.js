@@ -264,7 +264,7 @@ function BlogDetail() {
           {blog.image && (
             <div className="blog-detail-image-container">
               <img
-                src={`${API_BASE_URL}/uploads/${blog.image}`}
+                src={blog.image}
                 alt={blog.title}
                 className="blog-detail-image"
               />

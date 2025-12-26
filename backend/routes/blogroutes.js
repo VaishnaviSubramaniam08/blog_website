@@ -20,11 +20,11 @@ const router = express.Router();
 // Specific routes MUST come before parameterized routes
 router.get("/getblog", getController);
 router.get("/saved/all", authMiddleware, getSavedBlogsController);
-router.post("/addblog", authMiddleware, upload.single("image"), addController);
+router.post("/addblog", authMiddleware, addController);
 
 // Parameterized routes
 router.get("/:id", getBlogByIdController);
-router.put("/:id", authMiddleware, upload.single("image"), updateBlogController);
+router.put("/:id", authMiddleware, updateBlogController);
 router.delete("/:id", authMiddleware, deleteBlogController);
 router.patch("/:id/like", authMiddleware, likeController);
 router.patch("/:id/save", authMiddleware, saveBlogController);

@@ -91,7 +91,7 @@ function BlogCard({ blog, isLoggedIn, onCategoryClick }) {
     >
       {blog.image && (
         <img
-          src={`${API_BASE_URL}/uploads/${blog.image}`}
+          src={blog.image}
           alt={blog.title}
           style={{
             width: "100%",

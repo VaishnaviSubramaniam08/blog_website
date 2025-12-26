@@ -3,20 +3,18 @@ import User from "../models/userSchema.js";
 
 /* ================= ADD BLOG ================= */
 export const addController = async (req, res) => {
-  const { title, content, categories } = req.body;
+  const { title, content, categories, image } = req.body;
 
   if (!title || !content) {
     return res.status(400).json({ message: "Please fill all fields" });
   }
 
   try {
-    const parsedCategories = categories ? JSON.parse(categories) : [];
-
     const blog = new Blog({
       title,
       content,
-      image: req.file ? req.file.filename : null,
-      categories: parsedCategories,
+      image: image || null,
+      categories: categories || [],
       authorId: req.user.userId,
       likes: [],
       comments: [],
@@ -177,9 +175,9 @@ export const getSavedBlogsController = async (req, res) => {
 export const updateBlogController = async (req, res) => {
   const blogId = req.params.id;
   const userId = req.user.userId;
-  const { title, content, categories } = req.body;
+  const { title, content, categories, image } = req.body;
 
-  console.log("Update blog request:", { blogId, userId, title, content, categories, hasFile: !!req.file });
+  console.log("Update blog request:", { blogId, userId, title, content, categories, image });
 
   try {
     const blog = await Blog.findById(blogId);
@@ -197,10 +195,10 @@ export const updateBlogController = async (req, res) => {
     blog.title = title || blog.title;
     blog.content = content || blog.content;
     if (categories) {
-      blog.categories = JSON.parse(categories);
+      blog.categories = categories;
     }
-    if (req.file) {
-      blog.image = req.file.filename;
+    if (image !== undefined) {
+      blog.image = image;
     }
 
     await blog.save();
